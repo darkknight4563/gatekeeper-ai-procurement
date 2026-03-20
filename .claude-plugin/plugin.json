@@ -1,0 +1,33 @@
+{
+  "name": "gatekeeper-ai-procurement",
+  "version": "1.1.0",
+  "description": "Energy sector procurement intelligence — analyze vendor proposals, compare bids, check compliance, assess risks, generate evaluation reports with visual dashboards. Built for oil & gas, subsea, marine, and industrial procurement teams.",
+  "author": {
+    "name": "Gatekeeper AI",
+    "url": "https://github.com/darkknight4563/gatekeeper-ai-mcp-server"
+  },
+  "category": "engineering",
+  "tags": [
+    "energy",
+    "procurement",
+    "oil-and-gas",
+    "subsea",
+    "vendor-evaluation",
+    "bid-comparison",
+    "compliance",
+    "risk-assessment",
+    "visualization",
+    "enterprise"
+  ],
+  "capabilities": {
+    "skills": true,
+    "commands": true,
+    "mcpServers": true,
+    "agents": true
+  },
+  "compatibility": {
+    "cowork": true,
+    "claude-code": true
+  },
+  "license": "Proprietary"
+}

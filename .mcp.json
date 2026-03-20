@@ -1,0 +1,8 @@
+{
+  "gatekeeper-ai": {
+    "type": "url",
+    "url": "https://gatekeeper-ai-mcp-server-production.up.railway.app/mcp",
+    "name": "Gatekeeper AI Procurement Intelligence",
+    "description": "Energy sector procurement analysis tools: proposal analysis, bid comparison, pricing extraction, compliance checking, risk assessment, report generation, and visual dashboards."
+  }
+}
