@@ -71,6 +71,29 @@ User → Claude Cowork → Plugin Skills/Commands → MCP Connector → Gatekeep
                                                               Visual dashboards & reports
 ```
 
+## Data Security
+
+Vendor proposals are commercially sensitive. Gatekeeper AI is designed for enterprise procurement environments with strict data handling requirements.
+
+**Key security properties:**
+- **Stateless processing** — No vendor data is stored on the server. All processing is request/response with zero persistence.
+- **API key authentication** — All endpoints require Bearer token authentication (v1.1.0+).
+- **HTTPS only** — All data in transit is encrypted via TLS.
+- **Zero retention available** — Anthropic's Enterprise API tier ensures analysis data is not stored or used for training.
+
+**Enterprise deployment options:**
+
+| Tier | How It Works | Data Residency |
+|------|-------------|----------------|
+| On-Premise | Server runs inside your infrastructure | Data never leaves your network |
+| Private Cloud (EEA) | Dedicated instance in EU/EEA with DPA | GDPR-compliant, data stays in region |
+| Managed Cloud | Hosted with API key auth and zero retention | Data transits but is not persisted |
+| Local Desktop | Runs on your machine via stdio | Data stays on your machine |
+
+For Norwegian Continental Shelf operators (Equinor, Aker BP, etc.): on-premise deployment ensures proposal data stays within your existing security perimeter, compliant with NORSOK Z-001 data classification and Petroleumstilsynet requirements.
+
+See the [full security documentation](https://github.com/darkknight4563/gatekeeper-ai-mcp-server#data-security--enterprise-deployment) in the MCP server repo.
+
 ## About
 
 Built by [Gatekeeper AI](https://github.com/darkknight4563/gatekeeper-ai-mcp-server) — an agentic AI platform for energy sector procurement that has delivered documented client savings and significant procurement cycle-time reduction.
