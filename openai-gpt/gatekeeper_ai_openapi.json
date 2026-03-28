@@ -1,0 +1,477 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Gatekeeper AI - Procurement Intelligence",
+    "description": "Energy sector procurement analysis tools. Analyze vendor proposals, compare bids, check compliance, assess risks, and generate evaluation reports.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://gatekeeper-ai-mcp-server-production.up.railway.app",
+      "description": "Gatekeeper AI MCP Server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/mcp/tools/gatekeeper_analyze_proposal": {
+      "post": {
+        "operationId": "gatekeeper_analyze_proposal",
+        "summary": "Analyze a vendor proposal",
+        "description": "Performs a structured analysis of a vendor proposal document. Returns a scored evaluation covering pricing, technical fit, compliance, and risk indicators.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["proposal_text"],
+                "properties": {
+                  "proposal_text": {
+                    "type": "string",
+                    "description": "The full text content of the vendor proposal to be analyzed."
+                  },
+                  "vendor_name": {
+                    "type": "string",
+                    "description": "Name of the vendor submitting the proposal."
+                  },
+                  "project_context": {
+                    "type": "string",
+                    "description": "Optional context about the procurement project (scope, sector, requirements summary)."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Structured proposal analysis including scores, strengths, weaknesses, and risk indicators.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProposalAnalysis" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/mcp/tools/gatekeeper_compare_bids": {
+      "post": {
+        "operationId": "gatekeeper_compare_bids",
+        "summary": "Compare multiple vendor bids",
+        "description": "Takes two or more vendor bids and produces a ranked comparison table with scores across key evaluation dimensions.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["bids"],
+                "properties": {
+                  "bids": {
+                    "type": "array",
+                    "description": "Array of bids to compare. Each item should include vendor name and proposal/bid content.",
+                    "minItems": 2,
+                    "items": {
+                      "type": "object",
+                      "required": ["vendor_name", "bid_text"],
+                      "properties": {
+                        "vendor_name": {
+                          "type": "string",
+                          "description": "Name of the vendor."
+                        },
+                        "bid_text": {
+                          "type": "string",
+                          "description": "Full text of the vendor's bid or proposal."
+                        }
+                      }
+                    }
+                  },
+                  "evaluation_criteria": {
+                    "type": "array",
+                    "description": "Optional list of specific criteria to weight in the comparison (e.g. price, delivery timeline, compliance).",
+                    "items": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ranked comparison table with scores per vendor per criterion.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/BidComparison" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/mcp/tools/gatekeeper_check_compliance": {
+      "post": {
+        "operationId": "gatekeeper_check_compliance",
+        "summary": "Check vendor compliance against requirements",
+        "description": "Evaluates a vendor proposal or bid against a set of mandatory and preferred compliance requirements. Returns a pass/fail matrix per requirement.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["proposal_text", "requirements"],
+                "properties": {
+                  "proposal_text": {
+                    "type": "string",
+                    "description": "The vendor proposal or bid text to evaluate."
+                  },
+                  "vendor_name": {
+                    "type": "string",
+                    "description": "Name of the vendor."
+                  },
+                  "requirements": {
+                    "type": "array",
+                    "description": "List of compliance requirements to check against.",
+                    "items": {
+                      "type": "object",
+                      "required": ["requirement"],
+                      "properties": {
+                        "requirement": {
+                          "type": "string",
+                          "description": "The compliance requirement text."
+                        },
+                        "mandatory": {
+                          "type": "boolean",
+                          "description": "Whether this requirement is mandatory (true) or preferred (false). Defaults to true."
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Compliance matrix with pass/fail/partial status per requirement.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ComplianceMatrix" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/mcp/tools/gatekeeper_assess_risk": {
+      "post": {
+        "operationId": "gatekeeper_assess_risk",
+        "summary": "Assess procurement risk for a vendor or bid",
+        "description": "Performs a risk assessment on a vendor proposal, identifying financial, operational, compliance, and delivery risks with severity ratings.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["proposal_text"],
+                "properties": {
+                  "proposal_text": {
+                    "type": "string",
+                    "description": "The vendor proposal or bid text to assess for risk."
+                  },
+                  "vendor_name": {
+                    "type": "string",
+                    "description": "Name of the vendor."
+                  },
+                  "risk_categories": {
+                    "type": "array",
+                    "description": "Optional list of specific risk categories to focus on (e.g. financial, delivery, regulatory, cybersecurity).",
+                    "items": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Risk assessment report with identified risks, severity levels, and mitigation recommendations.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/RiskAssessment" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/mcp/tools/gatekeeper_generate_report": {
+      "post": {
+        "operationId": "gatekeeper_generate_report",
+        "summary": "Generate a full procurement evaluation report",
+        "description": "Produces a comprehensive evaluation report for one or more vendors, suitable for presenting to procurement committees or senior stakeholders.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["proposals"],
+                "properties": {
+                  "proposals": {
+                    "type": "array",
+                    "description": "One or more vendor proposals to include in the report.",
+                    "items": {
+                      "type": "object",
+                      "required": ["vendor_name", "proposal_text"],
+                      "properties": {
+                        "vendor_name": { "type": "string" },
+                        "proposal_text": { "type": "string" }
+                      }
+                    }
+                  },
+                  "project_name": {
+                    "type": "string",
+                    "description": "Name of the procurement project."
+                  },
+                  "report_format": {
+                    "type": "string",
+                    "enum": ["executive_summary", "detailed", "scorecard"],
+                    "description": "Format of the report output. Defaults to 'detailed'."
+                  },
+                  "recommendation_required": {
+                    "type": "boolean",
+                    "description": "Whether to include a final recommendation. Defaults to true."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Full formatted evaluation report with scores, analysis, and recommendation.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/EvaluationReport" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/mcp/tools/gatekeeper_create_dashboard": {
+      "post": {
+        "operationId": "gatekeeper_create_dashboard",
+        "summary": "Generate a visual procurement dashboard",
+        "description": "Creates a visual dashboard summarizing procurement evaluation data — scores, comparisons, compliance status, and risk heat maps — suitable for embedding in reports or presenting in meetings.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["evaluation_data"],
+                "properties": {
+                  "evaluation_data": {
+                    "type": "object",
+                    "description": "Structured evaluation data, typically the output of gatekeeper_compare_bids or gatekeeper_generate_report."
+                  },
+                  "dashboard_type": {
+                    "type": "string",
+                    "enum": ["comparison", "scorecard", "risk_heatmap", "full"],
+                    "description": "Type of dashboard to generate. Defaults to 'full'."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Dashboard data structure or rendered output.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DashboardOutput" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/mcp/tools/gatekeeper_extract_requirements": {
+      "post": {
+        "operationId": "gatekeeper_extract_requirements",
+        "summary": "Extract structured requirements from a tender or RFP document",
+        "description": "Parses a tender, RFP, or specification document and extracts structured mandatory and preferred requirements that can be used for subsequent compliance checks.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["document_text"],
+                "properties": {
+                  "document_text": {
+                    "type": "string",
+                    "description": "Full text of the tender, RFP, or specification document."
+                  },
+                  "document_type": {
+                    "type": "string",
+                    "enum": ["rfp", "tender", "specification", "contract", "other"],
+                    "description": "Type of document being parsed. Defaults to 'rfp'."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Structured list of extracted requirements with mandatory/preferred classification.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ExtractedRequirements" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "API key for Gatekeeper AI MCP server. Pass as: Authorization: Bearer {api_key}"
+      }
+    },
+    "schemas": {
+      "ProposalAnalysis": {
+        "type": "object",
+        "properties": {
+          "vendor_name": { "type": "string" },
+          "overall_score": { "type": "number", "description": "0-100 score" },
+          "strengths": { "type": "array", "items": { "type": "string" } },
+          "weaknesses": { "type": "array", "items": { "type": "string" } },
+          "risk_flags": { "type": "array", "items": { "type": "string" } },
+          "dimension_scores": {
+            "type": "object",
+            "description": "Scores broken down by dimension (pricing, technical, compliance, delivery, etc.)"
+          },
+          "summary": { "type": "string" }
+        }
+      },
+      "BidComparison": {
+        "type": "object",
+        "properties": {
+          "ranked_vendors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "rank": { "type": "integer" },
+                "vendor_name": { "type": "string" },
+                "overall_score": { "type": "number" },
+                "criterion_scores": { "type": "object" }
+              }
+            }
+          },
+          "recommendation": { "type": "string" },
+          "summary_table": { "type": "string" }
+        }
+      },
+      "ComplianceMatrix": {
+        "type": "object",
+        "properties": {
+          "vendor_name": { "type": "string" },
+          "overall_compliance": { "type": "string", "enum": ["pass", "fail", "partial"] },
+          "mandatory_pass_rate": { "type": "number" },
+          "requirements": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "requirement": { "type": "string" },
+                "mandatory": { "type": "boolean" },
+                "status": { "type": "string", "enum": ["pass", "fail", "partial", "not_addressed"] },
+                "evidence": { "type": "string" }
+              }
+            }
+          }
+        }
+      },
+      "RiskAssessment": {
+        "type": "object",
+        "properties": {
+          "vendor_name": { "type": "string" },
+          "overall_risk_level": { "type": "string", "enum": ["low", "medium", "high", "critical"] },
+          "risks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "category": { "type": "string" },
+                "description": { "type": "string" },
+                "severity": { "type": "string", "enum": ["low", "medium", "high", "critical"] },
+                "mitigation": { "type": "string" }
+              }
+            }
+          },
+          "summary": { "type": "string" }
+        }
+      },
+      "EvaluationReport": {
+        "type": "object",
+        "properties": {
+          "project_name": { "type": "string" },
+          "generated_at": { "type": "string", "format": "date-time" },
+          "executive_summary": { "type": "string" },
+          "vendor_evaluations": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ProposalAnalysis" }
+          },
+          "comparison": { "$ref": "#/components/schemas/BidComparison" },
+          "recommendation": { "type": "string" },
+          "recommended_vendor": { "type": "string" }
+        }
+      },
+      "DashboardOutput": {
+        "type": "object",
+        "properties": {
+          "dashboard_type": { "type": "string" },
+          "data": { "type": "object", "description": "Structured dashboard data for rendering." },
+          "render_url": { "type": "string", "description": "Optional URL to a hosted rendered dashboard." }
+        }
+      },
+      "ExtractedRequirements": {
+        "type": "object",
+        "properties": {
+          "document_type": { "type": "string" },
+          "total_requirements": { "type": "integer" },
+          "requirements": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": { "type": "string" },
+                "requirement": { "type": "string" },
+                "mandatory": { "type": "boolean" },
+                "category": { "type": "string" },
+                "source_section": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
